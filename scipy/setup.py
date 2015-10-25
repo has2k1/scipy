@@ -23,6 +23,7 @@ def configuration(parent_package='',top_path=None):
     config.add_subpackage('special')
     config.add_subpackage('stats')
     config.add_subpackage('ndimage')
+    config.add_subpackage('sandbox')
     if sys.version_info[0] < 3:
         config.add_subpackage('weave')
     config.add_subpackage('_build_utils')
