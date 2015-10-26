@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 """
 Numpy wrappers for lowess, loess and stl.
 
@@ -12,5 +14,4 @@ __version__ = '1.0'
 __revision__ = "$Revision$"
 __date__     = '$Date$'
 
-import pyloess
-from pyloess import lowess, stl, loess, loess_anova
+from .loess import loess, loess_anova

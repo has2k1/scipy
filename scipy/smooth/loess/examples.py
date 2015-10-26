@@ -1,3 +1,4 @@
+from __future__ import division, print_function, absolute_import
 """
 Wrapper to lowess and stl routines.
 
@@ -20,8 +21,7 @@ from numpy import bool_, float_
 
 #import maskedarray as MA
 
-import pyloess
-from pyloess import loess
+from .loess import loess
 
 com_example = [
 """
@@ -59,5 +59,5 @@ print madeup.model
 
 if 1:
     for com in com_example:
-        print com
+        print(com)
         exec(com)

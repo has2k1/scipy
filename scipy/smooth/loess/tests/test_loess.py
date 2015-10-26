@@ -1,5 +1,5 @@
 """
-Test series for lowess, stl and loess routines.
+Test series for loess routines.
 
 :author: Pierre GF Gerard-Marchant
 :contact: pierregm_at_uga_edu
@@ -23,104 +23,10 @@ narray = numpy.array
 
 from numpy.testing import *
 
-from scipy.sandbox.pyloess import lowess, stl, loess, loess_anova
+from scipy.smooth.loess import loess, loess_anova
 
 data_path, _ = os.path.split(__file__)
 
-#####---------------------------------------------------------------------------
-#---- --- LOWESS ---
-#####---------------------------------------------------------------------------
-class TestLowess(TestCase):
-    "Test class for lowess."
-    #
-    def __init__(self, *args, **kwds):
-        TestCase.__init__(self, *args, **kwds)
-        X = narray([ 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8,10,12,14,50])
-        Y = narray([18, 2,15, 6,10, 4,16,11, 7, 3,14,17,20,12, 9,13, 1, 8, 5,19])
-        idx = X.argsort()
-        self.data = (X[idx], Y[idx])
-    #............................................
-    def test_lowess_1(self):
-        "Tests lowess on typical data. part #1."
-        (X, Y) = self.data
-        YS = [13.659,11.145, 8.701, 9.722,10.000,11.300,11.300,11.300,
-              11.300,11.300,11.300,11.300,11.300,11.300,11.300,13.000,
-              6.440, 5.596,  5.456,18.998]
-        Z = lowess(X, Y, span=0.25, nsteps=0, delta=0)
-        assert_almost_equal(Z.outputs.fitted_values, YS, decimal=3)
-        assert_almost_equal(Z.outputs.fitted_residuals+Z.outputs.fitted_values,
-                            Z.inputs.y, decimal=3)
-    #............................................
-    def test_lowess_2(self):
-        "Tests lowess on typical data. part #2."
-        (X, Y) = self.data
-        YS = [13.659,12.347,11.034, 9.722,10.511,11.300,11.300,11.300,
-              11.300,11.300,11.300,11.300,11.300,11.300,11.300,13.000,
-               6.440, 5.596, 5.456,18.998]
-        Z = lowess(X, Y, span=0.25, nsteps=0, delta=3)
-        assert_almost_equal(Z.outputs.fitted_values, YS, decimal=3)
-        assert_almost_equal(Z.outputs.fitted_residuals+Z.outputs.fitted_values,
-                            Z.inputs.y, decimal=3)
-    #............................................
-    def test_lowess_3(self):
-        "Tests lowess on typical data. part #3."
-        (X, Y) = self.data
-        YS = [14.811,12.115, 8.984, 9.676,10.000,11.346,11.346,11.346,
-              11.346,11.346,11.346,11.346,11.346,11.346,11.346,13.000,
-               6.734, 5.744, 5.415,18.998 ]
-        Z = lowess(X, Y, span=0.25, nsteps=2, delta=0)
-        assert_almost_equal(Z.outputs.fitted_values, YS, decimal=3)
-        assert_almost_equal(Z.outputs.fitted_residuals+Z.outputs.fitted_values,
-                            Z.inputs.y, decimal=3)
-
-#####---------------------------------------------------------------------------
-#---- --- STL ---
-#####---------------------------------------------------------------------------
-class TestStl(TestCase):
-    "Tests STL."
-    #
-    def __init__(self, *args, **kwds):
-        TestCase.__init__(self, *args, **kwds)
-        # Get CO2 data ................
-        filename = os.path.join(data_path,'co2_data')
-        F = open(filename, 'r')
-        data = []
-        for line in F.readlines():
-            data.append([float(x) for x in line.rstrip().split()])
-        co2_data = numpy.concatenate(data)
-        # Get CO2 results .............
-        filename = os.path.join(data_path,'co2_results_double')
-        F = open(filename, 'r')
-        co2_results = []
-        for line in F.readlines():
-            co2_results.append(fromiter((float(x) for x in line.rstrip().split()),
-                                        float_))
-        #
-        parameters = dict(np=12, ns=35, nt=19, nl=13, no=2, ni=1,
-                          nsjump=4, ntjump=2, nljump=2,
-                          isdeg=1, itdeg=1, ildeg=1)
-        self.d = (co2_data, co2_results, parameters)
-    #............................................
-    def test_stl_1(self):
-        "Tests a classic STL."
-        (co2_data, co2_results, parameters) = self.d
-        co2_fitted = stl(co2_data, robust=False, **parameters)
-        assert_almost_equal(co2_fitted.seasonal, co2_results[0], 6)
-        assert_almost_equal(co2_fitted.trend, co2_results[1], 6)
-        assert_almost_equal(co2_fitted.weights, co2_results[2], 6)
-    #............................................
-    def test_stl_2(self):
-        "Tests a robust STL."
-        (co2_data, co2_results, parameters) = self.d
-        co2_fitted = stl(co2_data, robust=True, **parameters)
-        assert_almost_equal(co2_fitted.seasonal, co2_results[4], 6)
-        assert_almost_equal(co2_fitted.trend, co2_results[5], 6)
-        assert_almost_equal(co2_fitted.weights, co2_results[6], 6)
-
-
-#####---------------------------------------------------------------------------
-#---- --- LOESS ---
-#####---------------------------------------------------------------------------
 
 class TestLoess2d(TestCase):
     "Test class for lowess."
